@@ -101,6 +101,7 @@ def main():
     xT = acharxT(x, y, a, b, c, d, n)
     print("O resultado é:")
     print(xT)
+    print(x)
 
 if __name__ == "__main__":
     main()
