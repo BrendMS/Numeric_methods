@@ -2,20 +2,16 @@ import numpy as np
 import sys
 import time
 
-n = 20
-a = np.zeros((n,n+1))
-
-# Matriz A
-for i in range(n):
-    for j in range(n):
-        if (i == j) :
-            a[i,j] = 2
-        elif (abs(i-j)< 2):
-            a[i,j] = -1
-# Vetor b 
-for i in range(n):
-    a[i,n] = 1
-print(a)
+def vetores_to_matriz(a, b, c):
+    n = len(a)
+    A = np.zeros((n, n))
+    for i in range(n):
+        A[i,i] = b[i]
+        A[i,i-1] = a[i]
+        if i+1 == n:
+            A[i,0] = c[i]
+        else:
+            A[i,i+1] = c[i]
 
 
 A = np.copy(a[:,:-1])
@@ -43,6 +39,8 @@ for i in range(1,n,1):
     #Vetorizei aqui!
     y[i] = (b[i] - np.dot(LU[i,:i], y[:i]))
 
+print(y)
+print(LU)
 # Ux=y
 x = np.zeros(n)
 x[n-1] = y[n-1]/LU[n-1,n-1]

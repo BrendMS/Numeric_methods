@@ -10,20 +10,20 @@ matriz. Fa¸ca as implementa¸c˜oes de forma que elas possam ser usadas como pa
 
 def montaMatriz(n): #Função responsável por gerar os vetores 
     #a,b,c,d,bT,cT,v,w
-    a = np.zeros(n)
-    b = np.zeros(n)
-    c = np.zeros(n)
-    d = np.zeros(n)
+    d  = np.zeros(n)
+    a  = np.zeros(n)
+    b  = np.zeros(n)
+    c  = np.zeros(n)
     bT = np.zeros(n)
-    ct = np.zeros(n)
-    v = np.zeros(n)
-    w = np.zeros(n)
+    cT = np.zeros(n)
+    v  = np.zeros(n)
+    w  = np.zeros(n)
 
-    for i in range(n - 1):
-        if i == 0: #Gerar vetor a
-            a[i] = ((2*n)-1)/(2 *n)
+    for i in range(n):
+        if i == (n-1): #Gerar vetor a
+            a[i] = ((2*n)-1)/(2*n)
         else:
-            a[i] = ((2*n)-1)/(4*n)
+            a[i] = ((2*(i+1))-1)/(4*(i+1))
 
         b[i] = 2 #Gerar vetor b
 
@@ -46,9 +46,8 @@ def decompLU(a, b, c, n): #Função responsável por achar os valores das matriz
     u = np.zeros(n)
 
     u[0] = b[0]
-    l[0] = 0  
-    for i in range(1,n-1) :
-        if not (u[i] == 0):
+    for i in range(1,n) :
+        if not (u[i-1] == 0):
             l[i] = a[i]/u[i-1] #Achar valores de L
         else:
             l[i] = 0
@@ -65,9 +64,9 @@ def solucaoLU(l, u, c, d, n):
 
     #### SOLUCAO DO SISTEMA DE L
     y[0] = d[0]
-    for i in range(1, n-1):
+    for i in range(1, n):
         y[i] = d[i]-l[i]*y[i-1]
-    print("A solucao do sistema L obtida: " + str(y))
+    print("A solucao do sistema L(y) obtida: " + str(y))
 
     #### SOLUCAO DO SISTEMA DE U
     x = np.zeros(n)
@@ -78,7 +77,7 @@ def solucaoLU(l, u, c, d, n):
             x[i] = (y[i]-c[i]*x[i+1])/u[i]
         else:
             x[i] = 0
-    print("A solucao do sistema U obtida: " + str(x))
+    print("A solucao do sistema U(x) obtida: " + str(x))
     return x, y
 
 def acharxT(zT, yT, a, b, c, d, n):
