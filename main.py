@@ -2,10 +2,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 '''
-Implemente o algoritmo descrito acima para a decomposi¸c˜ao LU de uma matriz tridiagonal A n × n.
+Implemente o algoritmo descrito acima para a decomposicao LU de uma matriz tridiagonal A n × n.
 As matrizes A, L e U devem ser armazenadas em vetores conforme descrito no texto. Implemente
-tamb´em o algoritmo para a resolu¸c˜ao de um sistema linear tridiagonal usando a decomposi¸c˜ao LU da
-matriz. Fa¸ca as implementa¸c˜oes de forma que elas possam ser usadas como partes de outros programas.
+tambem o algoritmo para a resolucao de um sistema linear tridiagonal usando a decomposicao LU da
+matriz. Faca as implementacoes de forma que elas possam ser usadas como partes de outros programas.
 '''
 
 def montaMatriz(n): #Função responsável por gerar os vetores 
@@ -16,8 +16,9 @@ def montaMatriz(n): #Função responsável por gerar os vetores
     c  = np.zeros(n)
     bT = np.zeros(n)
     cT = np.zeros(n)
-    v  = np.zeros(n)
-    w  = np.zeros(n)
+    aT  = np.zeros(n)
+    dT = np.zeros(n)    
+    v  = np.zeros(n-1)
 
     for i in range(n):
         if i == (n-1): #Gerar vetor a
@@ -30,16 +31,30 @@ def montaMatriz(n): #Função responsável por gerar os vetores
         c[i] = 1 - a[i] #Gerar vetor c
         d[i] = np.cos((2*np.pi*(i+1)*(i+1))/(n*n)) #Gerar vetor d
 
-    bT = np.delete(b, 0) #Gerar vetor b da matriz tridiagonal
-    cT = np.delete(c, n-1) #Gerar vetor c da matriz tridiagonal
+    #Gerar vetores da matriz tridiagonal 
+    bT = np.copy(b[:n-1])
+    aT = np.copy(a[:n-1])
+    cT = np.copy(c[:n-1])
 
-    v = np.append(a, 0) #Gerar vetor v
-    v[n-2] = c[n-1] 
+    aT[0] = 0
+    cT[-1] = 0 
+
+    dT = np.copy(d[:n-1]) #Gerar vetor d_tio  
+
+    v[0] = a[0] #Gerar vetor v
+    v[-1] = c[n-2] 
+
+    print(aT)
+    print(bT)
+    print(cT)
+    print(dT)
+    print(a)
+    print(b)
+    print(c)
+    print(d)
+    print(v)
     
-    w[0] = c[n-1] #Gerar vetor w
-    w[n-2] = a[n-1]
-
-    return a,b,c,d,bT,cT,v,w #Retornar todos os vetores dessa função
+    return a,b,c,d,aT, bT, cT, dT, v #Retornar todos os vetores dessa função
 
 def decompLU(a, b, c, n): #Função responsável por achar os valores das matrizes L e U
     l = np.zeros(n)
@@ -55,8 +70,8 @@ def decompLU(a, b, c, n): #Função responsável por achar os valores das matriz
         u[i] = b[i] - l[i]*c[i-1] #Achar valores de U
         
 
-    print("A matriz L: " + str(l))
-    print("A matriz U: " + str(u))
+    #print("A matriz L: " + str(l))
+    #print("A matriz U: " + str(u))
     return l, u
             
 def solucaoLU(l, u, c, d, n):
@@ -66,42 +81,45 @@ def solucaoLU(l, u, c, d, n):
     y[0] = d[0]
     for i in range(1, n):
         y[i] = d[i]-l[i]*y[i-1]
-    print("A solucao do sistema L(y) obtida: " + str(y))
+    #print("A solucao do sistema L(y) obtida: " + str(y))
 
     #### SOLUCAO DO SISTEMA DE U
     x = np.zeros(n)
-    print("y e u: " + str(y[n-1]) + "   ---   " + str(u[n-1]))
     x[n-1] = y[n-1]/u[n-1] 
-    for i in range(n-2, 0, -1):
+    for i in range(n-2, -1, -1):
         if not (u[i] == 0):
             x[i] = (y[i]-c[i]*x[i+1])/u[i]
         else:
             x[i] = 0
-    print("A solucao do sistema U(x) obtida: " + str(x))
-    return x, y
+    #print("A solucao do sistema U(x) obtida: " + str(x))
+    return x
 
 def acharxT(zT, yT, a, b, c, d, n):
     xN = (d[n-1] - c[n-1]*yT[0] - a[n-1]*yT[n-2]) / (b[n-1] - c[n-1]*zT[0] -a[n-1]*zT[n-2])
     xT = yT - xN*zT
-    xT[n-1] = xN
+    xT = np.append(xT, xN)
 
     return xT
-
-def printaMatrizCiclica(a, b, c):
-    pass
     
+def resolveciclica(n):
+    a, b, c, d, aT, bT, cT, dT, v = montaMatriz(n)
+
+    l_c, u_c = decompLU(aT, bT, cT, n-1)
+    y = solucaoLU(l_c, u_c, cT, dT, n-1)
+    z = solucaoLU(l_c, u_c, cT, v, n-1)
+
+    result = acharxT(z, y, a, b, c, d, n)
+
+    return result
+
 def main():
     print("Qual o tamanho da matriz nxn? (Mínimo 3x3)") #FAZER INPUT DA MATRIZ E DOS 4 VETORES TAMBEM
     n = int(input())
-    print("Valor selecionado para n: " + str(n))
-    a,b,c,d,bT,cT,v,w = montaMatriz(n)
-    print(a)
-    l, u = decompLU(a, b, c, n)
-    x, y = solucaoLU(l, u, c, d, n)
-    xT = acharxT(x, y, a, b, c, d, n)
+    #print("Valor selecionado para n: " + str(n))
+
+    xT = resolveciclica(n)
     print("O resultado é:")
     print(xT)
-    print(x)
 
 if __name__ == "__main__":
     main()
