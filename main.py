@@ -238,7 +238,13 @@ def main():
     
     if tipo == "n":
         if entrada == "a":
-          pass  
+            print("Qual o tamanho da matriz A? (nxn)")
+            n = int(input())
+            a,b,c,d = inputMatriz(n)
+            l, u = decompLU(a, b, c, n)
+            xT = solucaoLU(l, u, c, d, n)
+
+
         if entrada == "b":
             a, b, c, d, v, n = montarMatrizVet()
             
