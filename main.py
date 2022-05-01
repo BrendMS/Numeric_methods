@@ -1,5 +1,4 @@
 import numpy as np
-import matplotlib.pyplot as plt
 
 '''
 Implemente o algoritmo descrito acima para a decomposicao LU de uma matriz tridiagonal A n × n.
@@ -8,7 +7,7 @@ tambem o algoritmo para a resolucao de um sistema linear tridiagonal usando a de
 matriz. Faca as implementacoes de forma que elas possam ser usadas como partes de outros programas.
 '''
 
-def montaMatriz(n): #Função responsável por gerar os vetores 
+def montaMatrizN(n): #Função responsável por gerar os vetores 
     #a,b,c,d,bT,cT,v,w
     d  = np.zeros(n)
     a  = np.zeros(n)
@@ -31,6 +30,46 @@ def montaMatriz(n): #Função responsável por gerar os vetores
         c[i] = 1 - a[i] #Gerar vetor c
         d[i] = np.cos((2*np.pi*(i+1)*(i+1))/(n*n)) #Gerar vetor d
 
+    v[0] = a[0] #Gerar vetor v
+    v[-1] = c[n-2] 
+
+    return a,b,c,d,v #Retornar todos os vetores dessa função
+
+def montarArray(x): 
+    y = np.zeros(len(x))
+    n = len(x)
+
+    for i in range(0, len(x)):
+        if x[i] != "[" and x[i] != "]" and x[i] !=",":
+            y[i] = int(x[i])
+    
+    return y, n
+
+def montarMatrizVet():
+    
+    print("qual o vetor a? (modelo: [1,2,3]")
+    a = str(input())
+    aV, n = montarArray(a)
+
+    print("qual o vetor b? (modelo: [1,2,3]")
+    b = str(input())
+    bV = montarArray(b) 
+
+    print("qual o vetor c? (modelo: [1,2,3]")
+    c = str(input())
+    cV = montarArray(c) 
+
+    print("qual o vetor d? (modelo: [1,2,3]")
+    d = str(input())
+    dV = montarArray(d)
+    
+    v = np.zeros(n-1)
+    v[0] = a[0] #Gerar vetor v
+    v[-1] = c[n-2]  
+
+    return aV, bV, cV, dV, v, n
+
+def tornarnaociclica(a,b,c,d,n):
     #Gerar vetores da matriz tridiagonal 
     bT = np.copy(b[:n-1])
     aT = np.copy(a[:n-1])
@@ -39,22 +78,9 @@ def montaMatriz(n): #Função responsável por gerar os vetores
     aT[0] = 0
     cT[-1] = 0 
 
-    dT = np.copy(d[:n-1]) #Gerar vetor d_tio  
+    dT = np.copy(d[:n-1]) #Gerar vetor d_tio   
 
-    v[0] = a[0] #Gerar vetor v
-    v[-1] = c[n-2] 
-
-    print(aT)
-    print(bT)
-    print(cT)
-    print(dT)
-    print(a)
-    print(b)
-    print(c)
-    print(d)
-    print(v)
-    
-    return a,b,c,d,aT, bT, cT, dT, v #Retornar todos os vetores dessa função
+    return aT, bT, cT, dT,
 
 def decompLU(a, b, c, n): #Função responsável por achar os valores das matrizes L e U
     l = np.zeros(n)
@@ -102,24 +128,53 @@ def acharxT(zT, yT, a, b, c, d, n):
     return xT
     
 def resolveciclica(n):
-    a, b, c, d, aT, bT, cT, dT, v = montaMatriz(n)
+    #monta as matrizes
+    a, b, c, d, v = montaMatrizN(n)
+    aT, bT, cT, dT = tornarnaociclica(a, b, c, d, n)
 
+    #faz a decomposicao
     l_c, u_c = decompLU(aT, bT, cT, n-1)
     y = solucaoLU(l_c, u_c, cT, dT, n-1)
     z = solucaoLU(l_c, u_c, cT, v, n-1)
 
+    #encontra o valor final
     result = acharxT(z, y, a, b, c, d, n)
 
     return result
 
 def main():
-    print("Qual o tamanho da matriz nxn? (Mínimo 3x3)") #FAZER INPUT DA MATRIZ E DOS 4 VETORES TAMBEM
-    n = int(input())
-    #print("Valor selecionado para n: " + str(n))
+    print("A matriz será cíclica? (respoder com s ou n)")
+    tipo = str(input())
 
-    xT = resolveciclica(n)
+    print("Qual tipo de entrada?") 
+    print("a) matriz")
+    print("b) vetores a, b, c, d")
+    print("c) n")
+
+    entrada = int(input())
+
+    if tipo == "s":
+        if entrada == "a":
+            pass
+        
+        if entrada == "b":
+            a, b, c, d, v, n = montarMatrizVet()
+            aT, bT, cT, dT = tornarnaociclica(a, b, c, d, n)
+
+            #faz a decomposicao
+            l_c, u_c = decompLU(aT, bT, cT, n-1)
+            y = solucaoLU(l_c, u_c, cT, dT, n-1)
+            z = solucaoLU(l_c, u_c, cT, v, n-1)
+
+            #encontra o valor final
+            xT = acharxT(z, y, a, b, c, d, n)
+
+        if entrada == "c":
+            xT = resolveciclica(entrada)
+    
     print("O resultado é:")
     print(xT)
+
 
 if __name__ == "__main__":
     main()

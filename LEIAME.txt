@@ -1,0 +1,5 @@
+Este trabalho é compatível com python 3.7 e versões acima e é necessário ter a biblioteca numpy instalada
+
+Para compilar esse projeto é necessário dar o comando: chmod +x main.py
+Em seguida para executar o código: python3 main.py
+
