@@ -7,6 +7,49 @@ tambem o algoritmo para a resolucao de um sistema linear tridiagonal usando a de
 matriz. Faca as implementacoes de forma que elas possam ser usadas como partes de outros programas.
 '''
 
+def inputMatriz(n):
+    matriz = np.zeros((n,n))
+    for i in range(n):
+        for j in range(n):
+            print("De o valor " + str(i+1) + "," + str(j+1))
+            matriz[i][j] = input()
+            
+    print("Matriz A:")
+    print(str(matriz))
+
+    #INPUT DO VETOR RESPOSTA
+    print("Agora faça o input do vetor resposta")
+    d = np.zeros(n)
+    for i in range(n):
+        print("De o valor " + str(i + 1))
+        d[i] = input()
+    
+    print("Vetor resposta;")
+    print(str(d))
+
+    #Separar vetores a, b e c
+    a = np.zeros(n)
+    b = np.zeros(n)
+    c = np.zeros(n)
+
+    a[0] = matriz[0][n-1]
+    c[n-1] = matriz[n-1][0]
+    for i in range(n):
+        b[i] = matriz[i][i]
+        if (i != (n-1)):
+            a[i+1] = matriz[i+1][i]
+        if (i != (n-1)):
+            c[i] = matriz[i][i+1]
+
+    print("Vetor A:")
+    print(str(a))
+    print("Vetor B:")
+    print(str(b))
+    print("Vetor C:")
+    print(str(c))
+
+    return a,b,c,d
+
 def montaMatrizN(n): #Função responsável por gerar os vetores 
     #a,b,c,d,bT,cT,v,w
     d  = np.zeros(n)
@@ -130,6 +173,9 @@ def acharxT(zT, yT, a, b, c, d, n):
 def resolveciclica(n):
     #monta as matrizes
     a, b, c, d, v = montaMatrizN(n)
+    print("Vetor A: " + str(a))
+    print("Vetor B: " + str(b))
+    print("Vetor C: " + str(c))
     aT, bT, cT, dT = tornarnaociclica(a, b, c, d, n)
 
     #faz a decomposicao
@@ -158,45 +204,20 @@ def main():
             print("Qual o tamanho da matriz A? (nxn)")
             n = int(input())
             #INPUT DA MATRIZ
-            matriz = np.zeros((n,n))
-            for i in range(n):
-                for j in range(n):
-                    print("De o valor " + str(i+1) + "," + str(j+1))
-                    matriz[i][j] = input()
-                    
-            print("Matriz A:")
-            print(str(matriz))
+            a,b,c,d = inputMatriz(n)
+            v = np.zeros(n-1) #Gerar vetor v
+            v[0] = a[0] 
+            v[-1] = c[n-2]
 
-            #INPUT DO VETOR RESPOSTA
-            print("Agora faça o input do vetor resposta")
-            d = np.zeros(n)
-            for i in range(n):
-                print("De o valor " + str(i + 1))
-                d[i] = input()
-            
-            print("Vetor resposta;")
-            print(str(d))
+            aT, bT, cT, dT = tornarnaociclica(a, b, c, d, n)
 
-            #Separar vetores a, b e c
-            a = np.zeros(n)
-            b = np.zeros(n)
-            c = np.zeros(n)
+            #faz a decomposicao
+            l_c, u_c = decompLU(aT, bT, cT, n-1)
+            y = solucaoLU(l_c, u_c, cT, dT, n-1)
+            z = solucaoLU(l_c, u_c, cT, v, n-1)
 
-            a[0] = matriz[0][n-1]
-            c[n-2] = matriz[n-2][0]
-            for i in range(n):
-                b[i] = matriz[i][i]
-                if (i != (n-1)):
-                    a[i+1] = matriz[i+1][i]
-                if (i != (n-1)):
-                    c[i] = matriz[i][i+1]
-
-            print("Vetor A:")
-            print(str(a))
-            print("Vetor B:")
-            print(str(b))
-            print("Vetor C:")
-            print(str(c))
+            #encontra o valor final
+            xT = acharxT(z, y, a, b, c, d, n)
         
         if entrada == "b":
             a, b, c, d, v, n = montarMatrizVet()
@@ -211,7 +232,9 @@ def main():
             xT = acharxT(z, y, a, b, c, d, n)
             
         if entrada == "c":
-            xT = resolveciclica(entrada)
+            print("Qual o tamanho da matriz A? (nxn)")
+            n = int(input())
+            xT = resolveciclica(n)
     
     if tipo == "n":
         if entrada == "a":
