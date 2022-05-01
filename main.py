@@ -151,11 +151,52 @@ def main():
     print("b) vetores a, b, c, d")
     print("c) n")
 
-    entrada = int(input())
+    entrada = str(input())
 
     if tipo == "s":
         if entrada == "a":
-            pass
+            print("Qual o tamanho da matriz A? (nxn)")
+            n = int(input())
+            #INPUT DA MATRIZ
+            matriz = np.zeros((n,n))
+            for i in range(n):
+                for j in range(n):
+                    print("De o valor " + str(i+1) + "," + str(j+1))
+                    matriz[i][j] = input()
+                    
+            print("Matriz A:")
+            print(str(matriz))
+
+            #INPUT DO VETOR RESPOSTA
+            print("Agora faça o input do vetor resposta")
+            d = np.zeros(n)
+            for i in range(n):
+                print("De o valor " + str(i + 1))
+                d[i] = input()
+            
+            print("Vetor resposta;")
+            print(str(d))
+
+            #Separar vetores a, b e c
+            a = np.zeros(n)
+            b = np.zeros(n)
+            c = np.zeros(n)
+
+            a[0] = matriz[0][n-1]
+            c[n-2] = matriz[n-2][0]
+            for i in range(n):
+                b[i] = matriz[i][i]
+                if (i != (n-1)):
+                    a[i+1] = matriz[i+1][i]
+                if (i != (n-1)):
+                    c[i] = matriz[i][i+1]
+
+            print("Vetor A:")
+            print(str(a))
+            print("Vetor B:")
+            print(str(b))
+            print("Vetor C:")
+            print(str(c))
         
         if entrada == "b":
             a, b, c, d, v, n = montarMatrizVet()
@@ -168,10 +209,24 @@ def main():
 
             #encontra o valor final
             xT = acharxT(z, y, a, b, c, d, n)
-
+            
         if entrada == "c":
             xT = resolveciclica(entrada)
     
+    if tipo == "n":
+        if entrada == "a":
+          pass  
+        if entrada == "b":
+            a, b, c, d, v, n = montarMatrizVet()
+            
+            l, u = decompLU(a, b, c, n)
+            xT = solucaoLU(l, u, c, d, n)
+
+        if entrada == "c":
+            a, b, c, d, v = montaMatrizN(n)
+            l, u = decompLU(a, b, c, n)
+            xT = solucaoLU(l, u, c, d, n)
+
     print("O resultado é:")
     print(xT)
 
