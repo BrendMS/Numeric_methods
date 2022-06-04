@@ -34,6 +34,19 @@ def integralsimples(n, f, a, b): # A LIMITE INFERIOR E B LIMITE SUPERIOR
     integral  = integral*((b-a)/2)
     return integral
 
+def integraldupla(n):
+    
+    #CALCULAR F
+    Fzao = np.zeros(n)
+    for i in range(0,n):
+        for j in range(0,n):
+            Fzao[i] = Fzao[i] + v[i][j]*f(x[i],y[i][j])   
+
+    #CALCULAR I
+    I = 0
+    for i in range(0,n):
+        I = I + u[i]*Fzao(x[i]) 
+
 def f(x):
     return x**2
 
