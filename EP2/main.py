@@ -121,12 +121,13 @@ def integraldupla(n, integr, a, b):
 
         for j in range(0,n):
             Fzao[i] +=  v[i][j]*f(xj[i],y[i][j], integr)  
+        print("n = " + str(i+1) + "  ||| F[i] = " + str(Fzao[i]))
 
     #CALCULAR I
     I = 0
     for i in range(0,n):
         I += wj[i]*Fzao[i] 
-
+        print("n = " + str(i+1) + "  ||| I = " + str(I))
     return I 
 
 def main():
