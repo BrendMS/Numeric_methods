@@ -12,8 +12,51 @@ wn8  = np.array([0.3626837833783619829651504, 0.3137066458778872873379622, 0.222
 xn10 = np.array([0.1488743389816312108848260, 0.4333953941292471907992659, 0.6794095682990244062343274, 0.8650633666889845107320967, 0.9739065285171717200779640, -0.1488743389816312108848260, -0.4333953941292471907992659, -0.6794095682990244062343274, -0.8650633666889845107320967, -0.9739065285171717200779640])
 wn10 = np.array([0.2955242247147528701738930, 0.2692667193099963550912269, 0.2190863625159820439955349, 0.1494513491505805931457763, 0.0666713443086881375935688, 0.2955242247147528701738930, 0.2692667193099963550912269, 0.2190863625159820439955349, 0.1494513491505805931457763, 0.0666713443086881375935688])
 
+def transp_nos(xi, c, d):
+    #CADA VALOR TRANSPORTADO
+    yj = (((d-c)/2)*xi)+((c+d)/2)
 
-def integralsimples(n, f, a, b): # A LIMITE INFERIOR E B LIMITE SUPERIOR
+    return yj
+
+def transp_pesos(wi, c, d):
+    #CADA VALOR TRANSPORTADO
+    wj = ((d-c)/2)*wi
+
+    return wj
+
+def d(x, sel):
+    #DEFINICAO DA FUNCAO DO EXTREMO SUPERIOR
+    if   sel == 1:
+        pass
+    elif sel == 2:
+        pass
+    elif sel == 4:
+        pass 
+    elif sel == 4:
+        pass
+
+    return resp
+
+def c(x, sel):
+    #DEFINICAO DA FUNCAO DO EXTREMO INFERIOR
+    if   sel == 1:
+        pass
+    elif sel == 2:
+        pass
+    elif sel == 4:
+        pass 
+    elif sel == 4:
+        pass 
+
+    return resp
+
+def integraldupla(n, sel, a, b):
+    #CRIA MATRIZES NECESSÁRIAS 
+    xj = np.zeros(n)
+    Fzao = np.zeros(n)
+    y = np.zeros(n)
+    v = np.zeros(n)
+
     #PEGAR NÓS E PESOS
     if n == 8:
         w = wn8
@@ -25,32 +68,28 @@ def integralsimples(n, f, a, b): # A LIMITE INFERIOR E B LIMITE SUPERIOR
         w = wn6
         x = xn6
 
-    # CALCULAR A INTEGRAL COM A MUDANÇA DE VARIAVEIS
-    integral = 0
-    for j in range(0,n): 
-        print(" j[" + str(j) + "]" + " Integral  = " + str(integral) + "     w = " + str(w[j]) + "   x = " + str(x[j]))
-        integral = integral + w[j]*f((((b-a)/2)*x[j])+((a+b)/2))
+    for j in range(n):
+        xj[j] = transp_nos(x[j], a, b)
 
-    integral  = integral*((b-a)/2)
-    return integral
-
-def integraldupla(n):
-    
     #CALCULAR F
-    Fzao = np.zeros(n)
     for i in range(0,n):
         for j in range(0,n):
+            y[i][j] = transp_nos(x[i], c(xj[i], sel), d(xj[i], sel))
+            v[i][j] = transp_pesos(w[i], c(xj[i], sel), d(xj[i], sel))
             Fzao[i] = Fzao[i] + v[i][j]*f(x[i],y[i][j])   
 
     #CALCULAR I
     I = 0
     for i in range(0,n):
-        I = I + u[i]*Fzao(x[i]) 
+        I = I + w[i]*Fzao(x[i]) 
+
+    I = I * ((b-a)/2)
+    return 
 
 def f(x):
     return x**2
 
-def mainfinal():
+def main():
     print("Escolha qual dos exemplos do enunciado que deseja executar('1', '2', '3', '4')")
     sel = int(input())
     print("Escolha o valor do n (6, 8 ou 10)")
@@ -64,9 +103,9 @@ def mainfinal():
     elif sel == 4:
         pass 
 
-def mainteste():
-    a = integralsimples(6, f, -10, 10)
-    print("RESULTADO: " + str(a))
+    print("n: " + str(n))
+    print("resultado da integral: " + str(result))
+
 
 if __name__ == "__main__":
-    mainteste()
+    main()
