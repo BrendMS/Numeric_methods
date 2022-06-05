@@ -1,4 +1,5 @@
 import numpy as np
+import math
 
 # N=6
 xn6  = np.array([0.2386191860831969086305017, 0.6612093864662645136613996, 0.9324695142031520278123016, -0.2386191860831969086305017, -0.6612093864662645136613996, -0.9324695142031520278123016])
@@ -29,26 +30,27 @@ def d(x, sel):
     if   sel == 1:
         pass
     elif sel == 2:
-        pass
+        result = 1 - x**2
+    elif sel == 3:
+        result = x**3
     elif sel == 4:
-        pass 
-    elif sel == 4:
-        pass
+        result = math.e**(-x**2)
 
-    return resp
+    return result
 
 def c(x, sel):
     #DEFINICAO DA FUNCAO DO EXTREMO INFERIOR
     if   sel == 1:
+        #se esse for 0 também apaga essa funcao e só bota zero lá
         pass
     elif sel == 2:
-        pass
+        result = 0
+    elif sel == 3:
+        result = 0
     elif sel == 4:
-        pass 
-    elif sel == 4:
-        pass 
+        result = 0
 
-    return resp
+    return result
 
 def integraldupla(n, sel, a, b):
     #CRIA MATRIZES NECESSÁRIAS 
@@ -98,7 +100,7 @@ def main():
         pass
     elif sel == 2:
         pass
-    elif sel == 4:
+    elif sel == 3:
         pass 
     elif sel == 4:
         pass 
