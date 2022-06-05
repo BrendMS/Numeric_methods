@@ -13,51 +13,92 @@ wn8  = np.array([0.3626837833783619829651504, 0.3137066458778872873379622, 0.222
 xn10 = np.array([0.1488743389816312108848260, 0.4333953941292471907992659, 0.6794095682990244062343274, 0.8650633666889845107320967, 0.9739065285171717200779640, -0.1488743389816312108848260, -0.4333953941292471907992659, -0.6794095682990244062343274, -0.8650633666889845107320967, -0.9739065285171717200779640])
 wn10 = np.array([0.2955242247147528701738930, 0.2692667193099963550912269, 0.2190863625159820439955349, 0.1494513491505805931457763, 0.0666713443086881375935688, 0.2955242247147528701738930, 0.2692667193099963550912269, 0.2190863625159820439955349, 0.1494513491505805931457763, 0.0666713443086881375935688])
 
-def transp_nos(xi, c, d):
+def transp_nos(n, x, c, d):
     #CADA VALOR TRANSPORTADO
-    yj = (((d-c)/2)*xi)+((c+d)/2)
+    yj = np.zeros(n)
+    for i in range(n):
+        yj[i] = (((d-c)/2)*x[i])+((c+d)/2)
 
     return yj
 
-def transp_pesos(wi, c, d):
+def transp_pesos(n, w, c, d):
     #CADA VALOR TRANSPORTADO
-    wj = ((d-c)/2)*wi
+    wj = np.zeros(n)
+    for i in range(n):
+        wj[i] = ((d-c)/2)*w[i]
 
     return wj
 
-def d(x, sel):
+def d(x, integr):
     #DEFINICAO DA FUNCAO DO EXTREMO SUPERIOR
-    if   sel == 1:
-        pass
-    elif sel == 2:
+    #EXEMPLO 1
+    if integr == 1:
+        result = 1
+    elif integr == 2:
+        result = 1-x
+    #EXEMPLO 2
+    elif integr == 3:
         result = 1 - x**2
-    elif sel == 3:
+    elif integr == 4:
+        result = math.sqrt(1-x)
+
+    #EXEMPLO 3
+    elif integr == 5:
         result = x**3
-    elif sel == 4:
+    elif integr == 6:
+        result = x**3
+
+    #EXEMPLO 4
+    elif integr == 7:
         result = math.e**(-x**2)
 
     return result
 
-def c(x, sel):
+def c(x, integr):
     #DEFINICAO DA FUNCAO DO EXTREMO INFERIOR
-    if   sel == 1:
-        #se esse for 0 também apaga essa funcao e só bota zero lá
-        pass
-    elif sel == 2:
+    if integr == 1 or integr == 2:
         result = 0
-    elif sel == 3:
+    elif integr == 3 or integr == 4:
         result = 0
-    elif sel == 4:
+    elif integr == 5 or integr == 6:
+        result = 0
+    elif integr == 7 or integr == 8:
         result = 0
 
     return result
 
-def integraldupla(n, sel, a, b):
+def f(x, y, integr):
+    resp = 0
+    if integr == 1 :
+        resp = 1
+    elif integr == 2:
+        resp = 1-x-y
+
+    elif integr == 3:
+        resp = 1- (y**2) - x
+
+    elif integr == 4:
+        resp = 1- (x**2) - y
+
+    elif integr == 5 or integr == 6:
+        pass
+    
+    elif integr == 7 or integr == 8:
+        pass
+
+    return resp
+
+def integraldupla(n, integr, a, b):
     #CRIA MATRIZES NECESSÁRIAS 
     xj = np.zeros(n)
+    wj = np.zeros(n)
     Fzao = np.zeros(n)
-    y = np.zeros(n)
-    v = np.zeros(n)
+    w = np.zeros(n)
+    x = np.zeros(n)
+
+    s = (n, n)
+    y = np.zeros(s)
+    v = np.zeros(s)
 
     #PEGAR NÓS E PESOS
     if n == 8:
@@ -70,44 +111,53 @@ def integraldupla(n, sel, a, b):
         w = wn6
         x = xn6
 
-    for j in range(n):
-        xj[j] = transp_nos(x[j], a, b)
+    xj = transp_nos(n, x, a, b)
+    wj = transp_pesos(n, w, a, b)
 
     #CALCULAR F
     for i in range(0,n):
+        y[i] = transp_nos(n, x, c(xj[i], integr), d(xj[i], integr))
+        v[i] = transp_pesos(n, w, c(xj[i], integr), d(xj[i], integr))
+
         for j in range(0,n):
-            y[i][j] = transp_nos(x[i], c(xj[i], sel), d(xj[i], sel))
-            v[i][j] = transp_pesos(w[i], c(xj[i], sel), d(xj[i], sel))
-            Fzao[i] = Fzao[i] + v[i][j]*f(x[i],y[i][j])   
+            Fzao[i] +=  v[i][j]*f(xj[i],y[i][j], integr)  
 
     #CALCULAR I
     I = 0
     for i in range(0,n):
-        I = I + w[i]*Fzao(x[i]) 
+        I += wj[i]*Fzao[i] 
 
-    I = I * ((b-a)/2)
-    return 
-
-def f(x):
-    return x**2
+    return I 
 
 def main():
     print("Escolha qual dos exemplos do enunciado que deseja executar('1', '2', '3', '4')")
     sel = int(input())
     print("Escolha o valor do n (6, 8 ou 10)")
     n  = int(input())
+    print("n: " + str(n))  
+
     if   sel == 1:
-        pass
+        integr = 1
+        result = integraldupla(n, integr, 0, 1)
+        print("Area do cubo: " + str(result))
+
+        integr = 2
+        result = integraldupla(n, integr, 0, 1)
+        print("Area do tetraedro: " + str(result))    
+        
     elif sel == 2:
-        pass
+        integr = 3
+        result = integraldupla(n, integr, 0, 1)
+        print("Area 1: " + str(result))
+
+        integr = 4
+        result = integraldupla(n, integr, 0, 1)
+        print("Area 2: " + str(result))
+
     elif sel == 3:
         pass 
     elif sel == 4:
         pass 
-
-    print("n: " + str(n))
-    print("resultado da integral: " + str(result))
-
 
 if __name__ == "__main__":
     main()
