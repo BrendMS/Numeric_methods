@@ -3,23 +3,35 @@ import numpy as np
 import math
 import ep2
 import ep1
+################ EP2 ##################
+
+def integralSimples(a, b, funcaoselect, x, i, h):
+    resultado = 0
+    w = 1 / (np.sqrt(3))
+    for i in range(1,2,1):
+        if i==1:
+            resultado = resultado + fvezesphi( (a + ((b-a)/2) * (1-w)) , x, i, funcaoselect, h)
+        else:
+            resultado = resultado + fvezesphi( (a + ((b-a)/2) * (1+w)) , x, i, funcaoselect, h)
+    return (resultado*((b-a)/2))
+
 
 ################ EP3 ##################
 
 def phi(x, x0, x1, h):
-    if x >= x0 & x <= x1:
-        return (x-x0)/h
+    if (x >= x0):
+        if (x <= x1):
+            return ((x-x0)/h)*1.0
+        else:
+            return 0.0
     else:
-        return 0
+        return 0.0
 
-def phil(x, x0, x1, h):
-    if x >= x0 & x <= x1:
-        return (x-x0)/h
-    else:
-        return 0
+def fvezesphi(xvar, x, i, funcaoselect, h):
+    return (funcaoescolhida(xvar, funcaoselect) * phi(xvar, x[i-1], x[i+1], h))
     
-def montarMatrizA_k1_q0(n, h, x): #MATRIZ QUANDO K(X) = 1 e Q(X) = 0
-    A = np.zeros(n,n)
+def montarMatrizA_k1_q0(n, h): #MATRIZ QUANDO K(X) = 1 e Q(X) = 0
+    A = np.zeros((n,n))
     for i in range(0, n):
        for j in range(0, n): 
             #diagonal principal
@@ -33,21 +45,21 @@ def montarMatrizA_k1_q0(n, h, x): #MATRIZ QUANDO K(X) = 1 e Q(X) = 0
                 A[i][j] = -1/h
     return A
 
-def produtointerno_f_phi(k, q, u, v, ul, vl):
-    pass
+def produtointerno_f_phi(x, i, funcaoselect, h):
+    return integralSimples(x[i-1], x[i+1], funcaoselect, x, i, h) #integralSimples(a, b, funcaoselect, x, i):
+    
 
-def montarMatrizB(n): #VETOR SOLUCAO DA MATRIZ A
+def montarMatrizB(n, x, funcaoselect, h): #VETOR SOLUCAO DA MATRIZ A
     B = np.zeros(n)
     for i in range(0,n):
-        B[i] = produtointerno_f_phi()
+        B[i] = produtointerno_f_phi(x, i, funcaoselect, h)
     return B
 
 
-
-
 ################ FUNCOES ##################
-def fx_validacao(x):
-    return 12*x*(1 - x) - 2
+def funcaoescolhida(x, n):
+    if   n == 1:
+        return 12*x*(1 - x) - 2
 
 ################ MAINS ###################
 def main():
@@ -57,13 +69,20 @@ def main():
     print("Desisto!")
 
 def main_validacao():
+    funcaoselect = 1
     n = 7
     h = 1/(n+1)
     x = np.zeros(n+1)
     for i in range(0, n+1):
         x[i] = i*h
+    print("VETOR X:")
     print(x)
-    #montarMatrizA_k1_q0(n, h, x)
+    A = montarMatrizA_k1_q0(n, h)
+    print("MATRIZ A:")
+    print(A)
+    B = montarMatrizB(n, x, funcaoselect, h)
+    print("MATRIZ B:")
+    print(B)
 
 if __name__ == "__main__":
     main_validacao()
