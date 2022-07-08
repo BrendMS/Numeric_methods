@@ -53,21 +53,21 @@ def montarMatrizA_k1_q0(n, h): #MATRIZ QUANDO K(X) = 1 e Q(X) = 0
                 Ai[j] = 2/h
     return A, As, Am, Ai 
 
-def produtointerno_f_phi(x, i, funcaoselect, h):
-    return integralSimples(x[i-1], x[i+1], funcaoselect, x, i, h) #integralSimples(a, b, funcaoselect, x, i):
+def produtointerno_f_phi(x, i, funcaoselect, h, xvar):
+    return abs((integralSimples(x[i-1], xvar, funcaoselect, x, i, h)) + abs(integralSimples(xvar, x[i+1], funcaoselect, x, i, h))) #integralSimples(a, b, funcaoselect, x, i):
     
 
-def montarMatrizB(n, x, funcaoselect, h): #VETOR SOLUCAO DA MATRIZ A
+def montarMatrizB(n, x, funcaoselect, h, xvar): #VETOR SOLUCAO DA MATRIZ A
     B = np.zeros(n)
     for i in range(0,n):
-        B[i] = produtointerno_f_phi(x, i, funcaoselect, h)
+        B[i] = produtointerno_f_phi(x, i, funcaoselect, h, xvar)
     return B
 
 
 ################ FUNCOES ##################
 def funcaoescolhida(x, n):
     if   n == 1:
-        return 12*x*(1 - x) - 2
+        return (12*x*(1 - x)) - 2
 
 ################ MAINS ###################
 def main():
@@ -77,18 +77,19 @@ def main():
     print("Desisto!")
 
 def main_validacao():
+    xvar = 0.2
     funcaoselect = 1
     n = 7 # testar com n = 7, 15, 31 e 63,
     h = 1/(n+1)
     x = np.zeros(n+1)
-    for i in range(0, n+1):
-        x[i] = i*h
+    for i in range(0, n+1, 1):
+        x[i] = (i)*h
     print("VETOR X:")
     print(x)
     A, As, Am, Ai = montarMatrizA_k1_q0(n, h)
     print("MATRIZ A:")
     print(A)
-    B = montarMatrizB(n, x, funcaoselect, h)
+    B = montarMatrizB(n, x, funcaoselect, h, xvar)
     print("MATRIZ B:")
     print(B)
 
@@ -99,12 +100,11 @@ def main_validacao():
     print(xT)
 
     #TESTAR SOLUÇÃO
-    Xx = 4
     resposta = 0
     for i in range(n):
-        resposta = resposta + xT[i] * phi(0.2, x[i-1], x[i+1], x[i], h)
+        resposta = resposta + (xT[i] * phi(xvar, x[i-1], x[i+1], x[i], h))
 
-    print("RESULTADO: " + str(resposta))
+    print("RESULTADO: " + str(resposta)) #COM Xvar = 0.2 a resposta = 0.0256
 
 if __name__ == "__main__":
     main_validacao()
