@@ -93,6 +93,16 @@ def main_validacao():
     ##DECOMPOSIÇÃO LU
     l, u = ep1.decompLU(Ai, Am, As, n)
     xT = ep1.solucaoLU(l, u, As, B, n)
+    print("Solução por LU:")
+    print(xT)
+
+    #TESTAR SOLUÇÃO
+    Xx = 1
+    resposta = 0
+    for i in range(n):
+        resposta = resposta + xT[i] * phi(Xx, x[i-1], x[i+1], h)
+
+    print("RESULTADO: " + str(resposta))
 
 if __name__ == "__main__":
     main_validacao()
