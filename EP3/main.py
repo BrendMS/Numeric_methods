@@ -18,17 +18,19 @@ def integralSimples(a, b, funcaoselect, x, i, h):
 
 ################ EP3 ##################
 
-def phi(x, x0, x1, h):
+def phi(x, x0, x1, xi, h):
     if (x >= x0):
-        if (x <= x1):
+        if (x <= xi):
             return ((x-x0)/h)*1.0
+        elif (x <= x1):
+            return ((x1-x)/h)*1.0
         else:
             return 0.0
     else:
         return 0.0
 
 def fvezesphi(xvar, x, i, funcaoselect, h):
-    return (funcaoescolhida(xvar, funcaoselect) * phi(xvar, x[i-1], x[i+1], h))
+    return (funcaoescolhida(xvar, funcaoselect) * phi(xvar, x[i-1], x[i+1], x[i], h))
     
 def montarMatrizA_k1_q0(n, h): #MATRIZ QUANDO K(X) = 1 e Q(X) = 0
     A = np.zeros((n,n))
@@ -76,7 +78,7 @@ def main():
 
 def main_validacao():
     funcaoselect = 1
-    n = 7
+    n = 7 # testar com n = 7, 15, 31 e 63,
     h = 1/(n+1)
     x = np.zeros(n+1)
     for i in range(0, n+1):
@@ -97,10 +99,10 @@ def main_validacao():
     print(xT)
 
     #TESTAR SOLUÇÃO
-    Xx = 1
+    Xx = 4
     resposta = 0
     for i in range(n):
-        resposta = resposta + xT[i] * phi(Xx, x[i-1], x[i+1], h)
+        resposta = resposta + xT[i] * phi(0.2, x[i-1], x[i+1], x[i], h)
 
     print("RESULTADO: " + str(resposta))
 
