@@ -90,6 +90,10 @@ def main_validacao():
     print("MATRIZ B:")
     print(B)
 
+    ##DECOMPOSIÇÃO LU
+    l, u = ep1.decompLU(Ai, Am, As, n)
+    xT = ep1.solucaoLU(l, u, As, B, n)
+
 if __name__ == "__main__":
     main_validacao()
 
