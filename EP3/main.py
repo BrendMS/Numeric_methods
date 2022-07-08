@@ -21,13 +21,13 @@ def integralSimples(a, b, funcaoselect, x, i, h):
 def phi(x, x0, x1, xi, h):
     if (x >= x0):
         if (x <= xi):
-            return ((x-x0)/h)*1.0
+            return ((x-x0)/h)
         elif (x <= x1):
-            return ((x1-x)/h)*1.0
+            return ((x1-x)/h)
         else:
-            return 0.0
+            return 0
     else:
-        return 0.0
+        return 0
 
 def fvezesphi(xvar, x, i, funcaoselect, h):
     return (funcaoescolhida(xvar, funcaoselect) * phi(xvar, x[i-1], x[i+1], x[i], h))
@@ -54,7 +54,7 @@ def montarMatrizA_k1_q0(n, h): #MATRIZ QUANDO K(X) = 1 e Q(X) = 0
     return A, As, Am, Ai 
 
 def produtointerno_f_phi(x, i, funcaoselect, h, xvar):
-    return abs((integralSimples(x[i-1], xvar, funcaoselect, x, i, h)) + abs(integralSimples(xvar, x[i+1], funcaoselect, x, i, h))) #integralSimples(a, b, funcaoselect, x, i):
+    return ((integralSimples(x[i-1], xvar, funcaoselect, x, i, h) + integralSimples(xvar, x[i+1], funcaoselect, x, i, h))) #integralSimples(a, b, funcaoselect, x, i):
     
 
 def montarMatrizB(n, x, funcaoselect, h, xvar): #VETOR SOLUCAO DA MATRIZ A
@@ -79,7 +79,7 @@ def main():
 def main_validacao():
     xvar = 0.2
     funcaoselect = 1
-    n = 7 # testar com n = 7, 15, 31 e 63,
+    n = 31 # testar com n = 7, 15, 31 e 63,
     h = 1/(n+1)
     x = np.zeros(n+1)
     for i in range(0, n+1, 1):
@@ -101,7 +101,7 @@ def main_validacao():
 
     #TESTAR SOLUÇÃO
     resposta = 0
-    for i in range(n):
+    for i in range(0,n,1):
         resposta = resposta + (xT[i] * phi(xvar, x[i-1], x[i+1], x[i], h))
 
     print("RESULTADO: " + str(resposta)) #COM Xvar = 0.2 a resposta = 0.0256
