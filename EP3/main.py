@@ -32,18 +32,24 @@ def fvezesphi(xvar, x, i, funcaoselect, h):
     
 def montarMatrizA_k1_q0(n, h): #MATRIZ QUANDO K(X) = 1 e Q(X) = 0
     A = np.zeros((n,n))
+    Am = np.zeros(n)
+    As = np.zeros(n)
+    Ai = np.zeros(n)
     for i in range(0, n):
        for j in range(0, n): 
             #diagonal principal
             if i == j:
                 A[i][j] = 2/h
+                Am[j] = 2/h 
             #diagonal superior
             elif (j - i) == 1:
                 A[i][j] = -1/h
+                As[j] = 2/h
             #diagonal inferior
             elif (j - i) == -1:
                 A[i][j] = -1/h
-    return A
+                Ai[j] = 2/h
+    return A, As, Am, Ai 
 
 def produtointerno_f_phi(x, i, funcaoselect, h):
     return integralSimples(x[i-1], x[i+1], funcaoselect, x, i, h) #integralSimples(a, b, funcaoselect, x, i):
@@ -77,7 +83,7 @@ def main_validacao():
         x[i] = i*h
     print("VETOR X:")
     print(x)
-    A = montarMatrizA_k1_q0(n, h)
+    A, As, Am, Ai = montarMatrizA_k1_q0(n, h)
     print("MATRIZ A:")
     print(A)
     B = montarMatrizB(n, x, funcaoselect, h)
