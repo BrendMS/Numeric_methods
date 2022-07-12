@@ -150,6 +150,35 @@ def main_doismateriais(n, plotar, ks, ka, d):
             return ka
     def q(x):
         return 0
+    funcaoselect = 4
+    h = L/(n+1)
+    x = np.zeros(n+2)
+    for i in range(0, n+2, 1):
+        x[i] = (i)*h
+    A, a, b, c = montarMatrizA_k1_q0(n, h, x, k, q)
+    B = montarMatrizB(n, x, funcaoselect, h)
+    l, u = ep1.decompLU(a ,b ,c, n)
+    alphas = ep1.solucaoLU(l, u, c, B, n)
+
+    def ubarra(xvar, alphas, x, h, n):
+        ubarra = 0.0
+        for j in range(1,n+1):
+            ubarra += alphas[j-1]*phi(xvar,x[j-1],x[j+1],x[j],h)
+        return ubarra
+
+    resultado = np.zeros(n+2)
+    for i in range(0,n+2):
+        resultado[i] = ubarra(x[i], alphas, x, h, n) + va + ((vb-va) * x[i]) - 273.5 #ubarra(x[i], alphasGER, x, h, n) + va + (vb-va) * x[i] - ubarra(x[i], alphasDIS, x, h, n) - 273.5
+
+    # RESULTADOS:
+    if plotar == 1:
+        plt.plot(x*1000, resultado)
+        plt.title('Temperatura')
+        plt.ylabel('Temperatura (C°)')
+        plt.xlabel('x(mm)')
+        plt.show()
+    for i in range(0,n+2):
+        print("A temperaatura em x = " + str(x[i]) + "mm vale: " +  str(resultado[i]) + " °C")
 
 def main_equilibriocomforcantesdecalor(n, plotar): #4.3
     L = 0.02
@@ -301,5 +330,5 @@ if __name__ == "__main__":
     #main_validacao(n)
     #main_validacao_comp(n)
     #main_equilibriocomforcantesdecalor_constante(n, plotar)
-    main_equilibriocomforcantesdecalor(n, plotar)
+    #main_equilibriocomforcantesdecalor(n, plotar)
     
