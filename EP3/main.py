@@ -12,12 +12,12 @@ def integralSimples_fphi(a, b, funcaoselect, x, i, h):
     resultado = fvezesphi(t + t1, x, i, funcaoselect, h) + fvezesphi(-t + t1, x, i, funcaoselect, h) 
     return resultado*((b-a)/2)
 
-def integralSimples_phiphi(L, x, j, i, h, k, q):
+def integralSimples_phiphi(a, b, x, j, i, h, k, q):
     w = np.sqrt(3)/3
-    t = (w/2)*(L)
-    t1 = (L)/2
+    t = (w/2)*(b-a)
+    t1 = (a+b)/2
     resultado = phiphi(t + t1, k, q, x, i, j, h) + phiphi(-t + t1, k, q, x, i, j, h) #(xvar, k, q, x, i, j, h)
-    return resultado*(L/2)
+    return resultado*((b-a)/2)
 
 
 ################ EP3 ##################
@@ -43,15 +43,16 @@ def fvezesphi(xvar, x, i, funcaoselect, h):
     return (funcaoescolhida(xvar, funcaoselect, 0) * phi(xvar, x[i-1], x[i+1], x[i], h))
 
 def phiphi(xvar, k, q, x, i, j, h):
-    return ( k(xvar)*phi_l(xvar, x[i-1], x[i+1], x[i], h)*phi_l(xvar, x[j-1], x[j+1], x[j], h) + q(xvar)*phi(xvar, x[i-1], x[i+1], x[i], h)*phi(xvar, x[j-1], x[j+1], x[j], h) ) # k * phi'i * phi'j   +    q * phi i * phi j
+    phiphi = ( k(xvar)*phi_l(xvar, x[i-1], x[i+1], x[i], h)*phi_l(xvar, x[j-1], x[j+1], x[j], h) + q(xvar)*phi(xvar, x[i-1], x[i+1], x[i], h)*phi(xvar, x[j-1], x[j+1], x[j], h) )
+    return phiphi
 
-def produtointerno_phiphi(L, q, k, x, j, i, h):
-    return integralSimples_phiphi(L, x, j, i, h, k, q) #(L, x, j, i, h, k, q):
+def produtointerno_phiphi(q, k, x, j, i, h):
+    return integralSimples_phiphi(x[i-1], x[i], x, j, i, h, k, q) + integralSimples_phiphi(x[i], x[i+1], x, j, i, h, k, q)#(L, x, j, i, h, k, q):
 
 def produtointerno_f_phi(x, i, funcaoselect, h):
     return ((integralSimples_fphi(x[i-1], x[i], funcaoselect, x, i, h) + integralSimples_fphi(x[i], x[i+1], funcaoselect, x, i, h))) #integralSimples(a, b, funcaoselect, x, i):
     
-def montarMatrizA_k1_q0(L, n, h, x, k, q): #MATRIZ QUANDO K(X) = 1 e Q(X) = 0
+def montarMatrizA_k1_q0(n, h, x, k, q): #MATRIZ QUANDO K(X) = 1 e Q(X) = 0
     A = np.zeros((n,n))
     Am = np.zeros(n)
     As = np.zeros(n)
@@ -60,17 +61,17 @@ def montarMatrizA_k1_q0(L, n, h, x, k, q): #MATRIZ QUANDO K(X) = 1 e Q(X) = 0
        for j in range(0, n): 
             #diagonal principal
             if i == j: #2/h
-                valor = produtointerno_phiphi(L, q, k, x, j, i, h)
+                valor = produtointerno_phiphi(q, k, x, j+1, i+1, h)
                 A[i][j] = valor
                 Am[j] = valor
             #diagonal superior
             elif (j - i) == 1: #-1/h
-                valor = -1/h
+                valor = produtointerno_phiphi(q, k, x, j+1, i+1, h)
                 A[i][j] = valor
                 As[j] = valor
             #diagonal inferior
             elif (j - i) == -1: #-1/h
-                valor = -1/h
+                valor = produtointerno_phiphi(q, k, x, j+1, i+1, h)
                 A[i][j] = valor
                 Ai[j] = valor
     return A, As, Am, Ai 
@@ -108,37 +109,46 @@ def calcularErro(n, funcaoselect, alphas, h, x, it):
 def funcaoescolhida(x, n, b):
     if   n == 1: ## VALIDACAO
         if b == 1: 
-            return (x**2)*((x-1)**2)
+            return (x**2)*((x-1)**2) #u(x)
         else:
-            return (12*x*(1 - x)) - 2
+            return (12*x*(1 - x)) - 2 #f(x)
+
     elif n == 2: ##COMPLEMENTO
         if b == 1: 
-            return (math.e**x + 1)
+            return ((x-1)*(math.e**(-x) - 1)) #u(x)
         else:
-            return ((x-1)*(math.e**(-x) - 1))
+            return (math.e**x + 1) #f(x) ]
+    elif n == 3: ##EQUILIBRIO FORÇANTES DE CALOR 4.3
+        if b == 1: 
+            return ((x-1)*(math.e**(-x) - 1)) #u(x)
+        else:
+            return (math.e**x + 1) #f(x) 
+
 
 ################ MAINS ###################
-def main():
-    n = 31
-    h = 1/(n+1)
-    x = np.zeros(n+2)
-    print("Desisto!")
 
-def main_validacao():
+def main_equilibriocomforcantesdecalor(n): #4.3
     L = 1
     def k(x):
-        return 1
+        return 3.6
     def q(x):
         return 0
-    funcaoselect = 1
-    n = 7 # testar com n = 7, 15, 31 e 63,
-    h = 1/(n+1)
+    
+
+def main_validacao_comp(n): # 4.2 complemento
+    L = 1
+    def k(x):
+        return math.e**x 
+    def q(x):
+        return 0
+    funcaoselect = 2
+    h = L/(n+1)
     x = np.zeros(n+2)
     for i in range(0, n+2, 1):
         x[i] = (i)*h
     print("VETOR X:")
     print(x)
-    A, a, b, c = montarMatrizA_k1_q0(L, n, h, x, k, q)
+    A, a, b, c = montarMatrizA_k1_q0(n, h, x, k, q)
     print("MATRIZ A (As(a), Am(b), Ai(c)):")
     #print(A)
     print(a)
@@ -158,10 +168,42 @@ def main_validacao():
     erro = calcularErro(n, funcaoselect, alphas, h, x, 1000)
     print("Erro encontrado: " + str(erro))
 
-def main_validacao_comp():
-    pass
+def main_validacao(n): # 4.2
+    L = 1
+    def k(x):
+        return 1
+    def q(x):
+        return 0
+    funcaoselect = 1
+    h = L/(n+1)
+    x = np.zeros(n+2)
+    for i in range(0, n+2, 1):
+        x[i] = (i)*h
+    print("VETOR X:")
+    print(x)
+    A, a, b, c = montarMatrizA_k1_q0(n, h, x, k, q)
+    print("MATRIZ A (As(a), Am(b), Ai(c)):")
+    #print(A)
+    print(a)
+    print(b)
+    print(c)
+    B = montarMatrizB(n, x, funcaoselect, h)
+    print("MATRIZ B(d):")
+    print(B)
+
+    ##DECOMPOSIÇÃO LU
+    l, u = ep1.decompLU(a ,b ,c, n)
+    alphas = ep1.solucaoLU(l, u, c, B, n)
+    print("ALPHAS / Solucao do LU:")
+    print(alphas)
+
+    #Calcular erro
+    erro = calcularErro(n, funcaoselect, alphas, h, x, 1000)
+    print("Erro encontrado: " + str(erro))
 
 if __name__ == "__main__":
-       main_validacao()
+    n = 7
+    #main_validacao(n)
+    main_validacao_comp(n)
 
     
