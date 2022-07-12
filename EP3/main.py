@@ -12,6 +12,13 @@ def integralSimples_fphi(a, b, funcaoselect, x, i, h):
     resultado = fvezesphi(t + t1, x, i, funcaoselect, h) + fvezesphi(-t + t1, x, i, funcaoselect, h) 
     return resultado*((b-a)/2)
 
+def integralSimples_phiphi(a, b, c, d, x, j, i, h):
+    w = np.sqrt(3)/3
+    t = (w/2)*(b-a)
+    t1 = (a+b)/2
+    resultado = phiphi(t + t1, x, j, i, h)*((b-a)/2)
+    return resultado
+
 
 ################ EP3 ##################
 
@@ -25,8 +32,17 @@ def phi(x, x0, x1, xi, h):
 
 def fvezesphi(xvar, x, i, funcaoselect, h):
     return (funcaoescolhida(xvar, funcaoselect, 0) * phi(xvar, x[i-1], x[i+1], x[i], h))
+
+def phiphi(xvar, x, j, i, h):
+    return phi(xvar, x[j-1], x[j+1], x[j], h)*phi(xvar, x[i-1], x[i+1], x[i], h)
+
+def produtointerno_phiphi(a, b, c, d, x, j, i, h):
+    return integralSimples_phiphi(a, b, c, d, x, j+1, i+1 ,h) + integralSimples_phiphi(a, b ,c, d, x, j+1, i+1 ,h)
+
+def produtointerno_f_phi(x, i, funcaoselect, h):
+    return ((integralSimples_fphi(x[i-1], x[i], funcaoselect, x, i, h) + integralSimples_fphi(x[i], x[i+1], funcaoselect, x, i, h))) #integralSimples(a, b, funcaoselect, x, i):
     
-def montarMatrizA_k1_q0(n, h): #MATRIZ QUANDO K(X) = 1 e Q(X) = 0
+def montarMatrizA_k1_q0(n, h, x): #MATRIZ QUANDO K(X) = 1 e Q(X) = 0
     A = np.zeros((n,n))
     Am = np.zeros(n)
     As = np.zeros(n)
@@ -34,21 +50,21 @@ def montarMatrizA_k1_q0(n, h): #MATRIZ QUANDO K(X) = 1 e Q(X) = 0
     for i in range(0, n):
        for j in range(0, n): 
             #diagonal principal
-            if i == j:
-                A[i][j] = 2/h
-                Am[j] = 2/h 
+            if i == j: #2/h
+                valor = produtointerno_phiphi(x[i-1], x[i+1], x[j-1], x[j+1], x, j, i, h)
+                A[i][j] = valor
+                Am[j] = valor
             #diagonal superior
-            elif (j - i) == 1:
-                A[i][j] = -1/h
-                As[j] = -1/h
+            elif (j - i) == 1: #-1/h
+                valor = -1/h
+                A[i][j] = valor
+                As[j] = valor
             #diagonal inferior
-            elif (j - i) == -1:
-                A[i][j] = -1/h
-                Ai[j] = -1/h
+            elif (j - i) == -1: #-1/h
+                valor = -1/h
+                A[i][j] = valor
+                Ai[j] = valor
     return A, As, Am, Ai 
-
-def produtointerno_f_phi(x, i, funcaoselect, h):
-    return ((integralSimples_fphi(x[i-1], x[i], funcaoselect, x, i, h) + integralSimples_fphi(x[i], x[i+1], funcaoselect, x, i, h))) #integralSimples(a, b, funcaoselect, x, i):
     
 
 def montarMatrizB(n, x, funcaoselect, h): #VETOR SOLUCAO DA MATRIZ A
@@ -108,7 +124,7 @@ def main_validacao():
         x[i] = (i)*h
     print("VETOR X:")
     print(x)
-    A, a, b, c = montarMatrizA_k1_q0(n, h)
+    A, a, b, c = montarMatrizA_k1_q0(n, h, x)
     print("MATRIZ A (As(a), Am(b), Ai(c)):")
     #print(A)
     print(a)
