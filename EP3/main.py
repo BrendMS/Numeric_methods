@@ -117,23 +117,65 @@ def funcaoescolhida(x, n, b):
         if b == 1: 
             return ((x-1)*(math.e**(-x) - 1)) #u(x)
         else:
-            return (math.e**x + 1) #f(x) ]
+            return (math.e**x + 1) #f(x)
     elif n == 3: ##EQUILIBRIO FORÇANTES DE CALOR 4.3
         if b == 1: 
-            return ((x-1)*(math.e**(-x) - 1)) #u(x)
+            return  0#u(x)
         else:
-            return (math.e**x + 1) #f(x) 
+            return  (37500000)*math.e**( (-(x-0.02/2)**2) / (0.5**2) )#f(x) 
 
 
 ################ MAINS ###################
 
 def main_equilibriocomforcantesdecalor(n): #4.3
-    L = 1
+    L = 0.02
     def k(x):
         return 3.6
     def q(x):
         return 0
+    funcaoselect = 3
+    h = L/(n+1)
+    x = np.zeros(n+2)
+    for i in range(0, n+2, 1):
+        x[i] = (i)*h
+    #print("VETOR X:")
+    #print(x)
+    A, a, b, c = montarMatrizA_k1_q0(n, h, x, k, q)
+    #print("MATRIZ A (As(a), Am(b), Ai(c)):")
+    #print(A)
+    #print(a)
+    #print(b)
+    #print(c)
+    B = montarMatrizB(n, x, funcaoselect, h)
+    #print("MATRIZ B(d):")
+    #print(B)
+
+    ##DECOMPOSIÇÃO LU
+    l, u = ep1.decompLU(a ,b ,c, n)
+    alphas = ep1.solucaoLU(l, u, c, B, n)
+    #print("ALPHAS / Solucao do LU:")
+    #print(alphas)
+
+    def ubarra(xvar, alphas, x, h, n):
+        ubarra = 0.0
+        for j in range(1,n+1):
+            ubarra += alphas[j-1]*phi(xvar,x[j-1],x[j+1],x[j],h)
+        return ubarra
+
+    x0 = ubarra(0, alphas, x, h, n)
+    x1 = ubarra(0.010, alphas, x, h, n)
+    x2 = ubarra(0.015, alphas, x, h, n)
+    x3 = ubarra(0.020, alphas, x, h, n)
+
+    print("Valor de calor em x =  0mm: " + str(x0))
+    print("Valor de calor em x = 10mm: " + str(x1))
+    print("Valor de calor em x = 15mm: " + str(x2))
+    print("Valor de calor em x = 20mm: " + str(x3))
+
+
+    #Calcular erro
     
+
 
 def main_validacao_comp(n): # 4.2 complemento
     L = 1
@@ -202,8 +244,8 @@ def main_validacao(n): # 4.2
     print("Erro encontrado: " + str(erro))
 
 if __name__ == "__main__":
-    n = 7
+    n = 63
     #main_validacao(n)
-    main_validacao_comp(n)
-
+    #main_validacao_comp(n)
+    main_equilibriocomforcantesdecalor(n)
     
