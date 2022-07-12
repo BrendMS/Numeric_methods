@@ -139,6 +139,18 @@ def funcaoescolhida(x, n, b):
 
 ################ MAINS ###################
 
+def main_doismateriais(n, plotar, ks, ka, d):
+    L = 0.02
+    va = 20 + 273.5
+    vb = 20 + 273.5
+    def k(x):
+        if (L/2 - d) <= x <= (L/2 + d):
+            return ks
+        else:
+            return ka
+    def q(x):
+        return 0
+
 def main_equilibriocomforcantesdecalor(n, plotar): #4.3
     L = 0.02
     va = 20 + 273.5
@@ -178,8 +190,6 @@ def main_equilibriocomforcantesdecalor(n, plotar): #4.3
     for i in range(0,n+2):
         print("A temperaatura em x = " + str(x[i]) + "mm vale: " +  str(resultado[i]) + " °C")
 
-    
-
 def main_equilibriocomforcantesdecalor_constante(n, plotar): #4.3
     L = 0.02
     va = 20 + 273.5
@@ -218,7 +228,6 @@ def main_equilibriocomforcantesdecalor_constante(n, plotar): #4.3
         plt.show()
     for i in range(0,n+2):
         print("A temperatura em x = " + str(x[i]) + "mm vale: " +  str(resultado[i]) + " °C")
-
 
 def main_validacao_comp(n): # 4.2 complemento
     L = 1
@@ -287,10 +296,10 @@ def main_validacao(n): # 4.2
     print("Erro encontrado: " + str(erro))
 
 if __name__ == "__main__":
-    n = 7
-    plotar = 0
+    n = 61
+    plotar = 1
     #main_validacao(n)
     #main_validacao_comp(n)
-    main_equilibriocomforcantesdecalor_constante(n, plotar)
-    #main_equilibriocomforcantesdecalor(n, plotar)
+    #main_equilibriocomforcantesdecalor_constante(n, plotar)
+    main_equilibriocomforcantesdecalor(n, plotar)
     
