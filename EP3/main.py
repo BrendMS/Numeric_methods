@@ -127,12 +127,12 @@ def funcaoescolhida(x, n, b):
             Qmenos = 11.25 * 1000000
             return  Qmais - Qmenos#f(x) 
     elif n == 4: ##EQUILIBRIO FORÇANTES DE CALOR 4.3 - NAO CONSTANTE
-        if b == 1: 
+        if b == 1:
             return  0#u(x)
         else:
-            Qmais = 7.5 * 1000000
+            Qmais = 37.5 * 1000000
             Qmenos = 11.25 * 1000000
-            L = 0.03
+            L = 0.02
             sigma = 1
             theta = 0.01
             return  (Qmais)*math.e**( (-(x-(L/2))**2) / (sigma**2) ) - (Qmenos)*( math.e**((-x**2)/(theta**2)) + math.e**((-(x-L)**2)/(theta**2)) )#f(x) 
@@ -142,7 +142,7 @@ def funcaoescolhida(x, n, b):
 def main_doismateriais(n, plotar, ks, ka, d):
     L =  0.02
     va = 20 + 273.5
-    vb =  20 + 273.5
+    vb = 20 + 273.5
     def k(x):
         if (L/2 - d) <= x <= (L/2 + d):
             return ks
