@@ -130,9 +130,9 @@ def funcaoescolhida(x, n, b):
         if b == 1: 
             return  0#u(x)
         else:
-            Qmais = 37.5 * 1000000
-            Qmenos =  7.5 * 1000000
-            L = 0.02
+            Qmais = 7.5 * 1000000
+            Qmenos = 11.25 * 1000000
+            L = 0.03
             sigma = 1
             theta = 0.01
             return  (Qmais)*math.e**( (-(x-(L/2))**2) / (sigma**2) ) - (Qmenos)*( math.e**((-x**2)/(theta**2)) + math.e**((-(x-L)**2)/(theta**2)) )#f(x) 
@@ -140,9 +140,9 @@ def funcaoescolhida(x, n, b):
 ################ MAINS ###################
 
 def main_doismateriais(n, plotar, ks, ka, d):
-    L = 0.02
+    L =  0.02
     va = 20 + 273.5
-    vb = 20 + 273.5
+    vb =  20 + 273.5
     def k(x):
         if (L/2 - d) <= x <= (L/2 + d):
             return ks
@@ -171,14 +171,14 @@ def main_doismateriais(n, plotar, ks, ka, d):
         resultado[i] = ubarra(x[i], alphas, x, h, n) + va + ((vb-va) * x[i]) - 273.5 #ubarra(x[i], alphasGER, x, h, n) + va + (vb-va) * x[i] - ubarra(x[i], alphasDIS, x, h, n) - 273.5
 
     # RESULTADOS:
+    for i in range(0,n+2):
+        print("A temperaatura em x = " + str(x[i]) + "mm vale: " +  str(resultado[i]) + " °C")
     if plotar == 1:
         plt.plot(x*1000, resultado)
         plt.title('Temperatura')
         plt.ylabel('Temperatura (C°)')
         plt.xlabel('x(mm)')
         plt.show()
-    for i in range(0,n+2):
-        print("A temperaatura em x = " + str(x[i]) + "mm vale: " +  str(resultado[i]) + " °C")
 
 def main_equilibriocomforcantesdecalor(n, plotar): #4.3
     L = 0.02
@@ -210,14 +210,14 @@ def main_equilibriocomforcantesdecalor(n, plotar): #4.3
         resultado[i] = ubarra(x[i], alphas, x, h, n) + va + ((vb-va) * x[i]) - 273.5 #ubarra(x[i], alphasGER, x, h, n) + va + (vb-va) * x[i] - ubarra(x[i], alphasDIS, x, h, n) - 273.5
 
     # RESULTADOS:
+    for i in range(0,n+2):
+        print("A temperaatura em x = " + str(x[i]) + "mm vale: " +  str(resultado[i]) + " °C")
     if plotar == 1:
         plt.plot(x*1000, resultado)
         plt.title('Temperatura')
         plt.ylabel('Temperatura (C°)')
         plt.xlabel('x(mm)')
         plt.show()
-    for i in range(0,n+2):
-        print("A temperaatura em x = " + str(x[i]) + "mm vale: " +  str(resultado[i]) + " °C")
 
 def main_equilibriocomforcantesdecalor_constante(n, plotar): #4.3
     L = 0.02
@@ -249,14 +249,14 @@ def main_equilibriocomforcantesdecalor_constante(n, plotar): #4.3
         resultado[i] = ubarra(x[i], alphas, x, h, n) + va + ((vb-va) * x[i]) - 273.5 #ubarra(x[i], alphasGER, x, h, n) + va + (vb-va) * x[i] - ubarra(x[i], alphasDIS, x, h, n) - 273.5
 
     #RESULTADOS:
+    for i in range(0,n+2):
+        print("A temperatura em x = " + str(x[i]) + "mm vale: " +  str(resultado[i]) + " °C")
     if plotar == 1:
         plt.plot(x*1000, resultado)
         plt.title('Temperatura com geração de calor constante')
         plt.ylabel('Temperatura (C°)')
         plt.xlabel('x(mm)')
         plt.show()
-    for i in range(0,n+2):
-        print("A temperatura em x = " + str(x[i]) + "mm vale: " +  str(resultado[i]) + " °C")
 
 def main_validacao_comp(n): # 4.2 complemento
     L = 1
@@ -325,8 +325,34 @@ def main_validacao(n): # 4.2
     print("Erro encontrado: " + str(erro))
 
 if __name__ == "__main__":
-    n = 61
-    plotar = 1
+    print("EP3")
+    print("Insira o valor de n:")
+    n = int(input())
+    print("Voce quer que os resultados sejam plotados? 1-Sim, 0-Não")
+    plotar = int(input())
+    print("O que vc deseja rodar?")
+    print("1 - Validacao")
+    print("2 - Validacao(Complemento)")
+    print("3 - Equilibrio com forcantes de calor com aquecimento e resfriamento constantes")
+    print("4 - Equilibrio com forcantes de calor com aquecimento e resfriamento com modelo realista")
+    print("5 - Equilibrio com forcantes de calor com dois materiais no chip")
+    select = int(input())
+    if  select == 1:
+        main_validacao(n)
+    elif select == 2:
+        main_validacao_comp(n)
+    elif select == 3:
+        main_equilibriocomforcantesdecalor_constante(n, plotar)
+    elif select == 4:
+        main_equilibriocomforcantesdecalor(n, plotar)
+    elif select == 5:
+        print("Insira o raio do chip em milimetros: (Obs: Largura total = 20mm)")
+        d = float(input())/1000
+        print("Insira a condutividade do chip(Silicio: 3.6): ")
+        ks = float(input())
+        print("Insira a condutividade do outro material: ")
+        ka = float(input())
+        main_doismateriais(n, plotar, ks, ka, d)
     #main_validacao(n)
     #main_validacao_comp(n)
     #main_equilibriocomforcantesdecalor_constante(n, plotar)
