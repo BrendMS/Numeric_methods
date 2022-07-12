@@ -12,12 +12,12 @@ def integralSimples_fphi(a, b, funcaoselect, x, i, h):
     resultado = fvezesphi(t + t1, x, i, funcaoselect, h) + fvezesphi(-t + t1, x, i, funcaoselect, h) 
     return resultado*((b-a)/2)
 
-def integralSimples_phiphi(a, b, c, d, x, j, i, h):
+def integralSimples_phiphi(L, x, j, i, h, k, q):
     w = np.sqrt(3)/3
-    t = (w/2)*(b-a)
-    t1 = (a+b)/2
-    resultado = phiphi(t + t1, x, j, i, h)*((b-a)/2)
-    return resultado
+    t = (w/2)*(L)
+    t1 = (L)/2
+    resultado = phiphi(t + t1, k, q, x, i, j, h) + phiphi(-t + t1, k, q, x, i, j, h) #(xvar, k, q, x, i, j, h)
+    return resultado*(L/2)
 
 
 ################ EP3 ##################
@@ -30,19 +30,28 @@ def phi(x, x0, x1, xi, h):
     else:
         return 0
 
+def phi_l(x, x0, x1, xi, h):
+    if  (x0 <= x <= xi):
+        return (1/h)
+    elif (xi <= x <= x1):
+        return (-1/h)
+    else:
+        return 0
+
+
 def fvezesphi(xvar, x, i, funcaoselect, h):
     return (funcaoescolhida(xvar, funcaoselect, 0) * phi(xvar, x[i-1], x[i+1], x[i], h))
 
-def phiphi(xvar, x, j, i, h):
-    return phi(xvar, x[j-1], x[j+1], x[j], h)*phi(xvar, x[i-1], x[i+1], x[i], h)
+def phiphi(xvar, k, q, x, i, j, h):
+    return ( k(xvar)*phi_l(xvar, x[i-1], x[i+1], x[i], h)*phi_l(xvar, x[j-1], x[j+1], x[j], h) + q(xvar)*phi(xvar, x[i-1], x[i+1], x[i], h)*phi(xvar, x[j-1], x[j+1], x[j], h) ) # k * phi'i * phi'j   +    q * phi i * phi j
 
-def produtointerno_phiphi(a, b, c, d, x, j, i, h):
-    return integralSimples_phiphi(a, b, c, d, x, j+1, i+1 ,h) + integralSimples_phiphi(a, b ,c, d, x, j+1, i+1 ,h)
+def produtointerno_phiphi(L, q, k, x, j, i, h):
+    return integralSimples_phiphi(L, x, j, i, h, k, q) #(L, x, j, i, h, k, q):
 
 def produtointerno_f_phi(x, i, funcaoselect, h):
     return ((integralSimples_fphi(x[i-1], x[i], funcaoselect, x, i, h) + integralSimples_fphi(x[i], x[i+1], funcaoselect, x, i, h))) #integralSimples(a, b, funcaoselect, x, i):
     
-def montarMatrizA_k1_q0(n, h, x): #MATRIZ QUANDO K(X) = 1 e Q(X) = 0
+def montarMatrizA_k1_q0(L, n, h, x, k, q): #MATRIZ QUANDO K(X) = 1 e Q(X) = 0
     A = np.zeros((n,n))
     Am = np.zeros(n)
     As = np.zeros(n)
@@ -51,7 +60,7 @@ def montarMatrizA_k1_q0(n, h, x): #MATRIZ QUANDO K(X) = 1 e Q(X) = 0
        for j in range(0, n): 
             #diagonal principal
             if i == j: #2/h
-                valor = produtointerno_phiphi(x[i-1], x[i+1], x[j-1], x[j+1], x, j, i, h)
+                valor = produtointerno_phiphi(L, q, k, x, j, i, h)
                 A[i][j] = valor
                 Am[j] = valor
             #diagonal superior
@@ -116,6 +125,11 @@ def main():
     print("Desisto!")
 
 def main_validacao():
+    L = 1
+    def k(x):
+        return 1
+    def q(x):
+        return 0
     funcaoselect = 1
     n = 7 # testar com n = 7, 15, 31 e 63,
     h = 1/(n+1)
@@ -124,7 +138,7 @@ def main_validacao():
         x[i] = (i)*h
     print("VETOR X:")
     print(x)
-    A, a, b, c = montarMatrizA_k1_q0(n, h, x)
+    A, a, b, c = montarMatrizA_k1_q0(L, n, h, x, k, q)
     print("MATRIZ A (As(a), Am(b), Ai(c)):")
     #print(A)
     print(a)
