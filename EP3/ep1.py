@@ -147,8 +147,8 @@ def decompLU(a, b, c, n): #Função responsável por achar os valores das matriz
         u[i] = b[i] - l[i]*c[i-1] #Achar valores de U
         
 
-    #print("A matriz L: " + str(l))
-    #print("A matriz U: " + str(u))
+    print("A matriz L: " + str(l))
+    print("A matriz U: " + str(u))
     return l, u
             
 def solucaoLU(l, u, c, d, n):
