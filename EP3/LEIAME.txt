@@ -1,0 +1,7 @@
+Este trabalho é compatível com python 3.7 e versões acima e é necessário ter a biblioteca numpy e matplotlib instalada
+
+Em seguida para executar o código: python3 main.py
+
+Caso o programa não rode por falta de permissões:
+No Linux dar o comando: chmod 777 main.py
+No windows executar o terminal escolhido como administrador

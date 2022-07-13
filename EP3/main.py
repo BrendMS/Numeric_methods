@@ -258,7 +258,7 @@ def main_equilibriocomforcantesdecalor_constante(n, plotar): #4.3
         plt.xlabel('x(mm)')
         plt.show()
 
-def main_validacao_comp(n): # 4.2 complemento
+def main_validacao_comp(n, plotar): # 4.2 complemento
     L = 1
     def k(x):
         return math.e**x 
@@ -291,7 +291,20 @@ def main_validacao_comp(n): # 4.2 complemento
     erro = calcularErro(n, funcaoselect, alphas, h, x, 1000)
     print("Erro encontrado: " + str(erro))
 
-def main_validacao(n): # 4.2
+    #Plotar erro
+    if plotar == 1:
+        nvetor = np.linspace(0,63,63, dtype=int)
+        errovetor = np.zeros(63)
+        for i in range(0,63):
+            errovetor[i] = calcularErro(nvetor[i], funcaoselect, alphas, h, x, 1000)
+        print(errovetor)
+        plt.plot(nvetor, errovetor)
+        plt.title('Erro - Validacao(Complemento)')
+        plt.ylabel('Erro')
+        plt.xlabel('n')
+        plt.show()
+
+def main_validacao(n, plotar): # 4.2
     L = 1
     def k(x):
         return 1
@@ -324,6 +337,20 @@ def main_validacao(n): # 4.2
     erro = calcularErro(n, funcaoselect, alphas, h, x, 1000)
     print("Erro encontrado: " + str(erro))
 
+    #Plotar erro
+    if plotar == 1:
+        nvetor = np.linspace(0,63,63, dtype=int)
+        errovetor = np.zeros(63)
+        for i in range(0,63):
+            errovetor[i] = calcularErro(nvetor[i], funcaoselect, alphas, h, x, 1000)
+        print(errovetor)
+        plt.plot(nvetor, errovetor)
+        plt.title('Erro - Validacao')
+        plt.ylabel('Erro')
+        plt.xlabel('n')
+        plt.show()
+
+
 if __name__ == "__main__":
     print("EP3")
     print("Insira o valor de n:")
@@ -338,9 +365,9 @@ if __name__ == "__main__":
     print("5 - Equilibrio com forcantes de calor com dois materiais no chip")
     select = int(input())
     if  select == 1:
-        main_validacao(n)
+        main_validacao(n, plotar)
     elif select == 2:
-        main_validacao_comp(n)
+        main_validacao_comp(n, plotar)
     elif select == 3:
         main_equilibriocomforcantesdecalor_constante(n, plotar)
     elif select == 4:
